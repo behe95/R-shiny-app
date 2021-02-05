@@ -1,5 +1,5 @@
 library("shiny")
-
+library("shinyjs")
 
 #load functions and define paths of reference files and data directory
 source("./functions.R")
@@ -370,7 +370,9 @@ server <- function(input, output) {
   
   
   current_page<-reactiveValues(number = 1)
-  show_total_data<-reactiveValues(number = 20) 
+  show_total_data<-reactiveValues(number = 25) 
+  
+  
   
   observeEvent(input$nextBtn, 
                {
@@ -378,12 +380,48 @@ server <- function(input, output) {
                  if (current_page$number < 1) {
                    current_page$number <<- 1
                  }
+                 js$scrolltop();
                })
   
   observeEvent(input$prevBtn, 
                {
                  current_page$number <<- current_page$number - 1
+                 if ((current_page$number * 20) > nrow(traits)) {
+                   total_rows<-nrow(traits);
+                   
+                   x<-total_rows%/%show_total_data$number;
+                   y<-total_rows%%show_total_data$number
+                   
+                   if (y>0 && y<show_total_data$number) {
+                     total_pages<<-x+1;
+                     current_page$number <<- total_pages
+                   }else{
+                     total_pages<<-x;
+                     current_page$number <<- total_pages
+                   }
+                 }
+                 js$scrolltop();
                })
+  
+  
+  output$paginationNumber<-renderText({
+    total_rows<-nrow(traits);
+    
+    x<-total_rows%/%show_total_data$number;
+    y<-total_rows%%show_total_data$number
+    
+    
+    if (y>0 && y<show_total_data$number) {
+      total_pages<<-x+1;
+      return(paste(current_page$number," of ",total_pages));
+    }else{
+      total_pages<<-x;
+      return(paste(current_page$number," of ",total_pages));
+    }
+    
+    
+    
+  })
  
   
   

@@ -1,5 +1,8 @@
 library(shiny)
 library(shinyBS)
+library(shinyjs)
+library(V8)
+
 
 source("./uifunctions.R")
 
@@ -11,6 +14,8 @@ trait_file<-"./data/2020-04-02_trait_overview.xlsx"
 traits <- read.xlsx(trait_file,rowNames=F)
 rownames(traits) <- traits[,"study_id"]
 traits<-traits[!is.na(traits[,"omit"]) & !traits[,"omit"],]
+
+
 
 
 #traits to omit ad-hoc (because they don't work or because they are actively selected against)
@@ -67,8 +72,11 @@ names(selections_response_newest)<-sub(" [PMID [0-9]+]$","",traits[traits[,"resp
 selections_other_newest<-traits[traits[,"other"] & traits[,"most_recent"],"study_id"]
 names(selections_other_newest)<-sub(" [PMID [0-9]+]$","",traits[traits[,"other"] & traits[,"most_recent"],"trait"])
 
+jsCode <- "shinyjs.scrolltop = function() {window.scrollTo(0, 0)};" 
 
 ui <- bootstrapPage(
+  useShinyjs(),
+  extendShinyjs(text = jsCode, functions = c("scrolltop")),
   head(),
   navigation(),
   
@@ -106,17 +114,35 @@ ui <- bootstrapPage(
   
   marginTop(),
   
+
   
   beginRow(),
   beginPanel(),
-  HTML("<div style='display:flex;justify-content:center'>"),
-  actionButton("prevBtn","Previous Page"),
-  actionButton("nextBtn","Next Page"),
+  HTML("<div style='display:flex;justify-content:center;align-items:center'>"),
+  actionButton("prevBtn","Previous Page",style="display: block;
+            margin: auto;
+            color: #fff;
+            background: #4E1EC5;
+            font-weight:bold;
+            padding: 10px 20px;
+            border-radius: 0px;"),
+  
+  htmlOutput("paginationNumber"),
+  
+  actionButton("nextBtn","Next Page",style="display: block;
+            margin: auto;
+            color: #fff;
+            background: #4E1EC5;
+            font-weight:bold;
+            padding: 10px 20px;
+            border-radius: 0px;"),
   HTML("</div>"),
   endPanel(),
   endRow(),
   
   marginBottom(),
+  
+  
   
   endPage()
 )

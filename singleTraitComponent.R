@@ -1,6 +1,8 @@
 #load functions and define paths of reference files and data directory
 library(openxlsx)
 library(DT)
+library(shinycssloaders)
+
 trait_file<-"./data/2020-04-02_trait_overview.xlsx"
 traits <- read.xlsx(trait_file,colNames = T,rowNames = T)
 
@@ -44,7 +46,7 @@ singleTraitComponent <- function(study_id) {
     beginRow(),
     # h2("Genetic risk score:"),
     
-    plotOutput(paste0("plot_1modals",traits[study_id,"id"]),height = 230),
+    plotOutput(paste0("plot_1modals",traits[study_id,"id"]),height = 230) %>% withSpinner(color="#0dc5c1"),
     
     endRow(),
     
@@ -62,7 +64,7 @@ singleTraitComponent <- function(study_id) {
     
     beginRow(),
     beginPanel(),
-    DT::dataTableOutput(paste0("table1",traits[study_id,"id"])),
+    DT::dataTableOutput(paste0("table1",traits[study_id,"id"])) %>% withSpinner(color="#0dc5c1"),
     endPanel(),
     endRow(),
     
@@ -70,7 +72,7 @@ singleTraitComponent <- function(study_id) {
     
     beginRow(),
     beginPanel(),
-    htmlOutput(paste0("text_3",traits[study_id,"id"])),
+    htmlOutput(paste0("text_3",traits[study_id,"id"])) %>% withSpinner(color="#0dc5c1"),
     endPanel(),
     endRow(),
     

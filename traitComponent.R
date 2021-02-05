@@ -1,6 +1,7 @@
 #load functions and define paths of reference files and data directory
 library(openxlsx)
 library(shinyBS)
+library(shinycssloaders)
 
 source("./singleTraitComponent.R")
 trait_file<-"./data/2020-04-02_trait_overview.xlsx"
@@ -46,7 +47,7 @@ traitComponent <- function(study_id) {
       beginRow(),
         # h2("Genetic risk score:"),
         
-        plotOutput(paste0("plot_1",traits[study_id,"id"]),height = 230),
+        plotOutput(paste0("plot_1",traits[study_id,"id"]),height = 230) %>% withSpinner(color="#0dc5c1"),
       endRow(),
     
       beginRow(),
