@@ -22,13 +22,13 @@ get_conf<-function(
   if(file.exists(configuration_file)){
     source(configuration_file)
   }else{
-    print(paste0(Sys.time(),": Configuration file not found at:",configuration_file,"setting only default values."))
+    #print(paste0(Sys.time(),": Configuration file not found at:",configuration_file,"setting only default values."))
   }
   
   #always import verbose
   if(!exists("verbose")){
     verbose<-1
-    print(paste0(Sys.time(),": variable verbose not found in configuration.R. Setting to default value of 1"))
+    #print(paste0(Sys.time(),": variable verbose not found in configuration.R. Setting to default value of 1"))
   }
   if(!is.numeric(verbose))stop("verbose not numeric")
   if(length(verbose)!=1)stop("verbose not length 1")

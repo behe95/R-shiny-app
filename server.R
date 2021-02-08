@@ -422,13 +422,53 @@ server <- function(input, output) {
     
     
   })
+  
+  #foo <- matrix(nrow=nrow(traits), ncol=2)
+  foo <- matrix(nrow=nrow(traits), ncol=2)
+  bar_df<-reactiveValues(df = NULL)
+  
+  count<-1
+  
+  
+  observe(
+    lapply(traits[1:nrow(traits),"study_id"], function(study_id){
+      
+      try(
+        {
+          o<-get_data(study_id)
+          
+          
+          foo[count,1]<<-study_id;
+          foo[count,2]<<-o[["GRS"]];
+          
+          count<<-count+1
+        },TRUE
+      )
+      
+    })
+  )
+  
+  
+  observe({
+    #foo<<-foo[order(foo[,2], decreasing = TRUE),]
+    df<-as.data.frame(foo,stringsAsFactors=FALSE)
+    df[, 2] <- as.numeric(df[, 2])
+    ordered_df <<- df[order(df$V2,decreasing = input$grs_order),]
+    
+    names(ordered_df)[1]<-"study_id"
+    names(ordered_df)[2]<-"grs"
+    
+    bar_df$df<<-ordered_df
+    
+  })
+  
+  #print(foo)
  
   
   
   
   output$traitComponent<-renderUI({
-    
-    lapply(traits[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(traitName){
+    lapply(bar_df$df[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(traitName){
       traitComponent(traitName)
     })
     
@@ -436,7 +476,10 @@ server <- function(input, output) {
   })
   
   
-  observe(lapply(traits[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
+  
+
+  
+  observe(lapply(bar_df$df[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
    output[[paste0("plot_1",rc_traits[study_id,"id"])]] <- renderPlot({
       
       #print("XXXXXXXXXXXXXXXXXXXds")
@@ -536,7 +579,7 @@ server <- function(input, output) {
   })
   )
   
-  observe(lapply(traits[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
+  observe(lapply(bar_df$df[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
     output[[paste0("plot_1modals",rc_traits[study_id,"id"])]] <- renderPlot({
       
       #print("XXXXXXXXXXXXXXXXXXXds")
@@ -636,7 +679,7 @@ server <- function(input, output) {
   })
   )
   
-  observe(lapply(traits[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
+  observe(lapply(bar_df$df[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
     #The table of SNPs and their effects
     output[[paste0("table1",rc_traits[study_id,"id"])]] <- DT::renderDataTable({ 
 #      if(input$goButton == 0){
@@ -685,7 +728,7 @@ server <- function(input, output) {
   })
   )
   
-  observe(lapply(traits[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
+  observe(lapply(bar_df$df[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
     output[[paste0("text_2",rc_traits[study_id,"id"])]] <- renderText({ 
         o<-get_data(study_id)
         m<-paste0("<br><br>",o[["textToReturn"]],"<br><br>")
@@ -698,7 +741,7 @@ server <- function(input, output) {
   })
   )
   
-  observe(lapply(traits[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
+  observe(lapply(bar_df$df[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
     output[[paste0("text_2modals",rc_traits[study_id,"id"])]] <- renderText({ 
       o<-get_data(study_id)
       m<-paste0("<br><br>",o[["textToReturn"]],"<br><br>")
@@ -711,7 +754,7 @@ server <- function(input, output) {
   })
   )
   
-  observe(lapply(traits[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
+  observe(lapply(bar_df$df[(((current_page$number-1) * show_total_data$number) + 1 ): (((current_page$number-1) * show_total_data$number) + show_total_data$number),"study_id"], function(study_id){
     #The long methods section written after the SNPs-table
     output[[paste0("text_3",rc_traits[study_id,"id"])]] <- renderText({ 
         o<-get_data(study_id)

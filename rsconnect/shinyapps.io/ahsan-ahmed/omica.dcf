@@ -5,8 +5,6 @@ account: ahsan-ahmed
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3538767
-bundleId: 4164150
+bundleId: 4195495
 url: https://ahsan-ahmed.shinyapps.io/omica/
-when: 1612121973.89449
-asMultiple: FALSE
-asStatic: FALSE
+when: 1612784049.52204

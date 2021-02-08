@@ -2,6 +2,7 @@ library(shiny)
 library(shinyBS)
 library(shinyjs)
 library(V8)
+library(shinycssloaders)
 
 
 source("./uifunctions.R")
@@ -105,12 +106,13 @@ ui <- bootstrapPage(
     radioButtons("ethnicity_group", label="Reference population:", choices=ethnicities, selected = "automatic", inline = FALSE,width = NULL),
     checkboxInput("use_all_snp_score", label ="Show all-SNP score if possible (experimental)", value = TRUE),
     checkboxInput("plot_heritability", label ="Plot variability explained", value = TRUE),
-    checkboxInput("real_dist", label ="Plot user distribution (experimental)", value = FALSE)
+    checkboxInput("real_dist", label ="Plot user distribution (experimental)", value = FALSE),
+    checkboxInput("grs_order", label ="Order High to Low (GRS)", value = TRUE),
     
   ),
   
   
-  uiOutput("traitComponent"),
+  uiOutput("traitComponent") %>% withSpinner(color="#0dc5c1"),
   
   marginTop(),
   
